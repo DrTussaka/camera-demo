@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Camera Lab</title>
+</head>
+<body>
+  <h2>My Camera Lab</h2>
+  <p>This demo displays your camera only after you grant permission.</p>
+
+  <button id="start">Start camera</button>
+  <button id="stop">Stop camera</button>
+  <p id="status">Camera is off.</p>
+
+  <video id="preview" autoplay playsinline
+         style="width:100%;max-width:450px"></video>
+
+  <script>
+    let stream = null;
+    const preview = document.getElementById("preview");
+    const status = document.getElementById("status");
+
+    document.getElementById("start").onclick = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user" },
+          audio: true
+        });
+        preview.srcObject = stream;
+        status.textContent = "Camera is on.";
+      } catch (error) {
+        status.textContent = "Camera unavailable or permission denied.";
+      }
+    };
+
+    document.getElementById("stop").onclick = () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+      preview.srcObject = null;
+      status.textContent = "Camera is off.";
+    };
+  </script>
+</body>
+</html>
